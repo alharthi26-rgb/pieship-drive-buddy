@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Calendar } from '@/components/ui/calendar';
-import { MapPin, Phone, Globe, ArrowRight, ArrowLeft, Clock } from 'lucide-react';
+import { Globe, ArrowRight, ArrowLeft, Clock } from 'lucide-react';
 import { format, addDays, isToday, isBefore } from 'date-fns';
 import { ar } from 'date-fns/locale';
 
@@ -63,9 +63,6 @@ const BookingCity = () => {
   const content = {
     ar: {
       backToHome: 'العودة للرئيسية',
-      officeLocation: 'موقع المكتب',
-      supervisor: 'المشرف',
-      callSupervisor: 'اتصال',
       selectDate: 'اختر التاريخ',
       availableTimes: 'الأوقات المتاحة',
       confirmBooking: 'تأكيد الحجز',
@@ -74,9 +71,6 @@ const BookingCity = () => {
     },
     en: {
       backToHome: 'Back to Home',
-      officeLocation: 'Office Location',
-      supervisor: 'Supervisor',
-      callSupervisor: 'Call',
       selectDate: 'Select Date',
       availableTimes: 'Available Times',
       confirmBooking: 'Confirm Booking',
@@ -146,41 +140,6 @@ const BookingCity = () => {
           </h1>
         </div>
 
-        {/* Office Info */}
-        <Card className="pieship-card p-6">
-          <div className="space-y-4">
-            <div>
-              <h3 className="font-semibold text-pieship-black mb-2 flex items-center gap-2">
-                <MapPin className="w-5 h-5 text-pieship-yellow" />
-                {t.officeLocation}
-              </h3>
-              <p className="text-pieship-gray">{city.address}</p>
-              <Button
-                variant="link"
-                className="p-0 h-auto text-pieship-yellow hover:text-pieship-yellow-dark"
-                onClick={() => window.open(city.mapsUrl, '_blank')}
-              >
-                عرض على الخريطة / View on Maps
-              </Button>
-            </div>
-            
-            <div className="flex items-center justify-between bg-pieship-gray-light rounded-lg p-4">
-              <div>
-                <h4 className="font-medium text-pieship-black">{t.supervisor}</h4>
-                <p className="text-pieship-gray">{city.supervisorName}</p>
-                <p className="text-sm text-pieship-gray">{city.supervisorMobile}</p>
-              </div>
-              <Button
-                size="sm"
-                className="pieship-gradient text-pieship-black"
-                onClick={() => window.open(`tel:${city.supervisorMobile}`)}
-              >
-                <Phone className="w-4 h-4 mr-2" />
-                {t.callSupervisor}
-              </Button>
-            </div>
-          </div>
-        </Card>
 
         {/* Date Selection */}
         <Card className="pieship-card p-6">
