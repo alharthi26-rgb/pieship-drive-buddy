@@ -151,7 +151,6 @@ const BookingCity = () => {
           </h1>
         </div>
 
-
         {/* Date Selection */}
         <Card className="pieship-card p-6">
           <h3 className="font-semibold text-pieship-black mb-4">{t.selectDate}</h3>
@@ -162,7 +161,7 @@ const BookingCity = () => {
             disabled={isDateDisabled}
             locale={isEnglish ? undefined : ar}
             fromDate={addDays(new Date(), 1)}
-            toDate={addDays(new Date(), 14)}
+            toDate={new Date(2025, 11, 31)} // December 31st, 2025
             className="w-full"
           />
         </Card>
