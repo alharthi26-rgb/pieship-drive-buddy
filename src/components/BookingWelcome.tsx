@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -21,7 +22,13 @@ const BookingWelcome = () => {
   const content = {
     ar: {
       title: 'أهلاً بك في PIESHIP',
-      subtitle: 'حان الوقت لحجز جلسة التدريب الخاصة بك. اختر مدينتك للمتابعة.',
+      subtitle: (
+        <>
+          حان الوقت لحجز جلسة التدريب الخاصة بك.
+          <br />
+          اختر مدينتك للمتابعة.
+        </>
+      ),
       selectCity: 'اختر مدينتك',
       lang: 'English'
     },
