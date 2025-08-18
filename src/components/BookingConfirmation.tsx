@@ -9,7 +9,8 @@ import {
   Phone, 
   Home, 
   CheckCircle,
-  Download
+  Download,
+  MessageCircle
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ar } from 'date-fns/locale';
@@ -69,6 +70,7 @@ const BookingConfirmation = () => {
       time: 'الوقت',
       office: 'المكتب',
       supervisor: 'المشرف',
+      whatsapp: 'واتساب',
       actions: 'الإجراءات',
       addToCalendar: 'إضافة إلى التقويم',
       getDirections: 'عرض الاتجاهات',
@@ -87,6 +89,7 @@ const BookingConfirmation = () => {
       time: 'Time',
       office: 'Office',
       supervisor: 'Supervisor',
+      whatsapp: 'WhatsApp',
       actions: 'Actions',
       addToCalendar: 'Add to Calendar',
       getDirections: 'Get Directions',
@@ -172,13 +175,6 @@ END:VCALENDAR`;
           </p>
         </div>
 
-        {/* Confirmation Message */}
-        <Card className="pieship-card p-4 bg-pieship-yellow-light border-pieship-yellow">
-          <p className="text-pieship-black text-center font-medium">
-            📱 {t.confirmationSent}
-          </p>
-        </Card>
-
         {/* Booking Details */}
         <Card className="pieship-card p-6">
           <h2 className="font-semibold text-pieship-black mb-4">{t.details}</h2>
@@ -220,9 +216,20 @@ END:VCALENDAR`;
               </div>
               <div className="flex justify-between">
                 <span className="text-pieship-gray">{t.supervisor}:</span>
-                <div className="text-right">
+                <div className="text-right flex flex-col">
                   <div className="font-medium text-pieship-black">{cityInfo.supervisorName}</div>
-                  <div className="text-sm text-pieship-gray">{cityInfo.supervisorMobile}</div>
+                  <div className="flex items-center gap-2 justify-end">
+                    <span className="text-sm text-pieship-gray">{cityInfo.supervisorMobile}</span>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="h-7 px-2 text-xs bg-green-500 hover:bg-green-600 text-white border-green-500"
+                      onClick={() => window.open(`https://wa.me/${cityInfo.supervisorMobile.replace(/^0/, '966')}`, '_blank')}
+                    >
+                      <MessageCircle className="w-3 h-3 mr-1" />
+                      {t.whatsapp}
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>
