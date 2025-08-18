@@ -1,0 +1,286 @@
+import { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { 
+  Globe, 
+  Calendar as CalendarIcon, 
+  MapPin, 
+  Phone, 
+  Home, 
+  CheckCircle,
+  Download
+} from 'lucide-react';
+import { format } from 'date-fns';
+import { ar } from 'date-fns/locale';
+
+const BookingConfirmation = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { city, date, time, driverInfo, isEnglish: initialLang } = location.state || {};
+  
+  const [isEnglish, setIsEnglish] = useState(initialLang || false);
+
+  const cityData = {
+    riyadh: {
+      nameAr: 'الرياض',
+      nameEn: 'Riyadh',
+      officeName: 'مكتب PIESHIP - الرياض',
+      address: 'حي القيروان، الرياض',
+      mapsUrl: 'https://maps.google.com/?q=riyadh+pieship',
+      supervisorName: 'أحمد العتيبي',
+      supervisorMobile: '+9665XXXXXXX'
+    },
+    jeddah: {
+      nameAr: 'جدة',
+      nameEn: 'Jeddah',
+      officeName: 'مكتب PIESHIP - جدة',
+      address: 'حي النزهة، جدة',
+      mapsUrl: 'https://maps.google.com/?q=jeddah+pieship',
+      supervisorName: 'خالد الغامدي',
+      supervisorMobile: '+9665XXXXXXX'
+    },
+    dammam: {
+      nameAr: 'الدمام',
+      nameEn: 'Dammam',
+      officeName: 'مكتب PIESHIP - الدمام',
+      address: 'حي المزروعية، الدمام',
+      mapsUrl: 'https://maps.google.com/?q=dammam+pieship',
+      supervisorName: 'عبدالله القحطاني',
+      supervisorMobile: '+9665XXXXXXX'
+    }
+  };
+
+  const timeSlots = {
+    '16:00': { displayAr: '4:00 م', displayEn: '4:00 PM' },
+    '17:00': { displayAr: '5:00 م', displayEn: '5:00 PM' },
+    '18:00': { displayAr: '6:00 م', displayEn: '6:00 PM' }
+  };
+
+  const content = {
+    ar: {
+      title: 'تم تأكيد الحجز 🎉',
+      confirmed: 'تم تأكيد حجزك بنجاح',
+      details: 'تفاصيل الحجز',
+      driverName: 'اسم السائق',
+      city: 'المدينة',
+      date: 'التاريخ',
+      time: 'الوقت',
+      office: 'المكتب',
+      supervisor: 'المشرف',
+      actions: 'الإجراءات',
+      addToCalendar: 'إضافة إلى التقويم',
+      getDirections: 'عرض الاتجاهات',
+      callSupervisor: 'اتصال بالمشرف',
+      newBooking: 'حجز جديد',
+      confirmationSent: 'تم إرسال رسالة تأكيد إلى رقمك',
+      lang: 'English'
+    },
+    en: {
+      title: 'Booking Confirmed 🎉',
+      confirmed: 'Your booking has been confirmed successfully',
+      details: 'Booking Details',
+      driverName: 'Driver Name',
+      city: 'City',
+      date: 'Date',
+      time: 'Time',
+      office: 'Office',
+      supervisor: 'Supervisor',
+      actions: 'Actions',
+      addToCalendar: 'Add to Calendar',
+      getDirections: 'Get Directions',
+      callSupervisor: 'Call Supervisor',
+      newBooking: 'New Booking',
+      confirmationSent: 'Confirmation message sent to your number',
+      lang: 'العربية'
+    }
+  };
+
+  const t = content[isEnglish ? 'en' : 'ar'];
+
+  // Redirect if no booking data
+  if (!city || !date || !time || !driverInfo) {
+    navigate('/');
+    return null;
+  }
+
+  const cityInfo = cityData[city as keyof typeof cityData];
+  const timeInfo = timeSlots[time as keyof typeof timeSlots];
+
+  // Generate ICS file content
+  const generateICS = () => {
+    const startDate = new Date(date);
+    const [hours, minutes] = time.split(':');
+    startDate.setHours(parseInt(hours), parseInt(minutes));
+    
+    const endDate = new Date(startDate);
+    endDate.setHours(startDate.getHours() + 1); // 1 hour duration
+
+    const formatICSDate = (date: Date) => {
+      return date.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+    };
+
+    const icsContent = `BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//PIESHIP//Driver Training//EN
+BEGIN:VEVENT
+UID:${Date.now()}@pieship.com
+DTSTART:${formatICSDate(startDate)}
+DTEND:${formatICSDate(endDate)}
+SUMMARY:PIESHIP Driver Training - ${cityInfo[isEnglish ? 'nameEn' : 'nameAr']}
+DESCRIPTION:Driver training session with ${cityInfo.supervisorName}\\nContact: ${cityInfo.supervisorMobile}
+LOCATION:${cityInfo.address}
+END:VEVENT
+END:VCALENDAR`;
+
+    const blob = new Blob([icsContent], { type: 'text/calendar' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'pieship-training.ics';
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  return (
+    <div className={`min-h-screen bg-gradient-to-br from-success-light to-background p-4 ${isEnglish ? 'ltr' : ''}`}>
+      {/* Header */}
+      <div className="flex justify-end mb-6 max-w-md mx-auto">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setIsEnglish(!isEnglish)}
+          className="gap-2"
+        >
+          <Globe className="w-4 h-4" />
+          {t.lang}
+        </Button>
+      </div>
+
+      <div className="max-w-md mx-auto space-y-6">
+        {/* Success Header */}
+        <div className="text-center">
+          <div className="w-20 h-20 bg-success rounded-full flex items-center justify-center mx-auto mb-4">
+            <CheckCircle className="w-10 h-10 text-white" />
+          </div>
+          <h1 className="text-2xl font-bold text-pieship-black mb-2">
+            {t.title}
+          </h1>
+          <p className="text-pieship-gray">
+            {t.confirmed}
+          </p>
+        </div>
+
+        {/* Confirmation Message */}
+        <Card className="pieship-card p-4 bg-pieship-yellow-light border-pieship-yellow">
+          <p className="text-pieship-black text-center font-medium">
+            📱 {t.confirmationSent}
+          </p>
+        </Card>
+
+        {/* Booking Details */}
+        <Card className="pieship-card p-6">
+          <h2 className="font-semibold text-pieship-black mb-4">{t.details}</h2>
+          <div className="space-y-4">
+            <div className="flex justify-between">
+              <span className="text-pieship-gray">{t.driverName}:</span>
+              <span className="font-medium text-pieship-black">{driverInfo.fullName}</span>
+            </div>
+            
+            <div className="flex justify-between">
+              <span className="text-pieship-gray">{t.city}:</span>
+              <span className="font-medium text-pieship-black">
+                {cityInfo[isEnglish ? 'nameEn' : 'nameAr']}
+              </span>
+            </div>
+            
+            <div className="flex justify-between">
+              <span className="text-pieship-gray">{t.date}:</span>
+              <span className="font-medium text-pieship-black">
+                {format(new Date(date), 'PPP', { locale: isEnglish ? undefined : ar })}
+              </span>
+            </div>
+            
+            <div className="flex justify-between">
+              <span className="text-pieship-gray">{t.time}:</span>
+              <span className="font-medium text-pieship-black">
+                {timeInfo[isEnglish ? 'displayEn' : 'displayAr']}
+              </span>
+            </div>
+            
+            <hr className="border-pieship-gray-light" />
+            
+            <div>
+              <div className="flex justify-between mb-2">
+                <span className="text-pieship-gray">{t.office}:</span>
+                <span className="font-medium text-pieship-black text-right">
+                  {cityInfo.address}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-pieship-gray">{t.supervisor}:</span>
+                <div className="text-right">
+                  <div className="font-medium text-pieship-black">{cityInfo.supervisorName}</div>
+                  <div className="text-sm text-pieship-gray">{cityInfo.supervisorMobile}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Card>
+
+        {/* Action Buttons */}
+        <Card className="pieship-card p-6">
+          <h3 className="font-semibold text-pieship-black mb-4">{t.actions}</h3>
+          <div className="space-y-3">
+            <Button
+              onClick={generateICS}
+              className="w-full h-12 pieship-gradient text-pieship-black font-medium"
+              size="lg"
+            >
+              <Download className="w-5 h-5 mr-3" />
+              {t.addToCalendar}
+            </Button>
+            
+            <Button
+              onClick={() => window.open(cityInfo.mapsUrl, '_blank')}
+              variant="outline"
+              className="w-full h-12"
+              size="lg"
+            >
+              <MapPin className="w-5 h-5 mr-3" />
+              {t.getDirections}
+            </Button>
+            
+            <Button
+              onClick={() => window.open(`tel:${cityInfo.supervisorMobile}`)}
+              variant="outline"
+              className="w-full h-12"
+              size="lg"
+            >
+              <Phone className="w-5 h-5 mr-3" />
+              {t.callSupervisor}
+            </Button>
+          </div>
+        </Card>
+
+        {/* New Booking Button */}
+        <Button
+          onClick={() => navigate('/')}
+          variant="outline"
+          className="w-full h-12"
+          size="lg"
+        >
+          <Home className="w-5 h-5 mr-3" />
+          {t.newBooking}
+        </Button>
+
+        {/* Footer */}
+        <div className="text-center mt-8 text-pieship-gray text-sm">
+          PIESHIP © 2025 - نشكركم لاختياركم خدماتنا
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default BookingConfirmation;
