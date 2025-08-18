@@ -37,11 +37,22 @@ const cityData = {
   }
 };
 
-const timeSlots = [
-  { time: '16:00', displayAr: '4:00 م', displayEn: '4:00 PM' },
-  { time: '17:00', displayAr: '5:00 م', displayEn: '5:00 PM' },
-  { time: '18:00', displayAr: '6:00 م', displayEn: '6:00 PM' }
-];
+const timeSlots = {
+  riyadh: [
+    { time: '16:00', displayAr: '4:00 م', displayEn: '4:00 PM' },
+    { time: '19:00', displayAr: '7:00 م', displayEn: '7:00 PM' }
+  ],
+  jeddah: [
+    { time: '16:00', displayAr: '4:00 م', displayEn: '4:00 PM' },
+    { time: '17:00', displayAr: '5:00 م', displayEn: '5:00 PM' },
+    { time: '18:00', displayAr: '6:00 م', displayEn: '6:00 PM' }
+  ],
+  dammam: [
+    { time: '16:00', displayAr: '4:00 م', displayEn: '4:00 PM' },
+    { time: '17:00', displayAr: '5:00 م', displayEn: '5:00 PM' },
+    { time: '18:00', displayAr: '6:00 م', displayEn: '6:00 PM' }
+  ]
+};
 
 const BookingCity = () => {
   const { cityKey } = useParams();
@@ -164,7 +175,7 @@ const BookingCity = () => {
               {t.availableTimes}
             </h3>
             <div className="grid grid-cols-1 gap-3">
-              {timeSlots.map((slot) => (
+              {timeSlots[cityKey as keyof typeof timeSlots]?.map((slot) => (
                 <Button
                   key={slot.time}
                   variant={selectedSlot === slot.time ? "default" : "outline"}

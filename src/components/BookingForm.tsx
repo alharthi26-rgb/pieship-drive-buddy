@@ -29,7 +29,8 @@ const BookingForm = () => {
   const timeSlots = {
     '16:00': { displayAr: '4:00 م', displayEn: '4:00 PM' },
     '17:00': { displayAr: '5:00 م', displayEn: '5:00 PM' },
-    '18:00': { displayAr: '6:00 م', displayEn: '6:00 PM' }
+    '18:00': { displayAr: '6:00 م', displayEn: '6:00 PM' },
+    '19:00': { displayAr: '7:00 م', displayEn: '7:00 PM' }
   };
 
   const content = {
