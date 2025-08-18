@@ -53,8 +53,12 @@ const BookingWelcome = () => {
       <div className="max-w-md mx-auto">
         {/* PIESHIP Logo/Brand */}
         <div className="text-center mb-8">
-          <div className="w-20 h-20 bg-pieship-yellow rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <span className="text-2xl font-bold text-pieship-black">P</span>
+          <div className="w-24 h-24 mx-auto mb-4">
+            <img 
+              src="/lovable-uploads/d629e956-fde5-4cfc-a8a9-8bab7e18af44.png" 
+              alt="PIESHIP Logo" 
+              className="w-full h-full object-contain rounded-2xl"
+            />
           </div>
           <h1 className="text-3xl font-bold text-pieship-black mb-2">
             {t.title}
@@ -86,7 +90,11 @@ const BookingWelcome = () => {
 
         {/* Footer */}
         <div className="text-center mt-8 text-pieship-gray text-sm">
-          PIESHIP © 2025 - تدريب السائقين الجدد
+          PIESHIP © 2025 - حجز موعد التدريب
+          <br />
+          <span className="text-xs text-pieship-gray/70 mt-1 block">
+            المواعيد متاحة حتى نهاية سبتمبر
+          </span>
         </div>
       </div>
     </div>

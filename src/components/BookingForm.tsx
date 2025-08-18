@@ -16,8 +16,7 @@ const BookingForm = () => {
   const [isEnglish, setIsEnglish] = useState(initialLang || false);
   const [formData, setFormData] = useState({
     fullName: '',
-    mobile: '',
-    referralCode: ''
+    mobile: ''
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -45,8 +44,6 @@ const BookingForm = () => {
       fullNamePlaceholder: 'أدخل الاسم الكامل',
       mobile: 'رقم الجوال',
       mobilePlaceholder: '05XXXXXXXX',
-      referralCode: 'كود الإحالة (اختياري)',
-      referralPlaceholder: 'أدخل كود الإحالة',
       confirmBooking: 'تأكيد الحجز',
       lang: 'English',
       nameError: 'يرجى إدخال الاسم الكامل (كلمتين على الأقل)',
@@ -63,8 +60,6 @@ const BookingForm = () => {
       fullNamePlaceholder: 'Enter full name',
       mobile: 'Mobile Number',
       mobilePlaceholder: '05XXXXXXXX',
-      referralCode: 'Referral Code (Optional)',
-      referralPlaceholder: 'Enter referral code',
       confirmBooking: 'Confirm Booking',
       lang: 'العربية',
       nameError: 'Please enter full name (at least 2 words)',
@@ -223,18 +218,6 @@ const BookingForm = () => {
               )}
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="referralCode" className="text-pieship-gray">
-                {t.referralCode}
-              </Label>
-              <Input
-                id="referralCode"
-                value={formData.referralCode}
-                onChange={(e) => handleInputChange('referralCode', e.target.value)}
-                placeholder={t.referralPlaceholder}
-                dir="ltr"
-              />
-            </div>
 
             <Button
               type="submit"

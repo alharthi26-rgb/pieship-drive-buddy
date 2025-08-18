@@ -12,28 +12,28 @@ const cityData = {
     nameAr: 'الرياض',
     nameEn: 'Riyadh',
     officeName: 'مكتب PIESHIP - الرياض',
-    address: 'حي القيروان، الرياض',
-    mapsUrl: 'https://maps.google.com/?q=riyadh+pieship',
-    supervisorName: 'أحمد العتيبي',
-    supervisorMobile: '+9665XXXXXXX'
+    address: 'الرياض - حي السلي',
+    mapsUrl: 'https://maps.app.goo.gl/wA4jNCwVCMhuSqyYA?g_st=iwb',
+    supervisorName: 'سيف جابر',
+    supervisorMobile: '0571345377'
   },
   jeddah: {
     nameAr: 'جدة',
     nameEn: 'Jeddah',
     officeName: 'مكتب PIESHIP - جدة',
-    address: 'حي النزهة، جدة',
-    mapsUrl: 'https://maps.google.com/?q=jeddah+pieship',
-    supervisorName: 'خالد الغامدي',
-    supervisorMobile: '+9665XXXXXXX'
+    address: 'جدة - حي الروابي',
+    mapsUrl: 'https://maps.app.goo.gl/4XnMD3Dkhh1UE3o2A?g_st=iw',
+    supervisorName: 'محمد محسن',
+    supervisorMobile: '0573542070'
   },
   dammam: {
     nameAr: 'الدمام',
     nameEn: 'Dammam',
     officeName: 'مكتب PIESHIP - الدمام',
-    address: 'حي المزروعية، الدمام',
-    mapsUrl: 'https://maps.google.com/?q=dammam+pieship',
-    supervisorName: 'عبدالله القحطاني',
-    supervisorMobile: '+9665XXXXXXX'
+    address: 'الدمام - حي المنار',
+    mapsUrl: 'https://maps.app.goo.gl/6mKFg6fVpLcxJgkP9',
+    supervisorName: 'عبدالرحيم ابو الحسن',
+    supervisorMobile: '0510029651'
   }
 };
 
@@ -110,7 +110,8 @@ const BookingCity = () => {
   };
 
   const isDateDisabled = (date: Date) => {
-    return isBefore(date, new Date()) || isToday(date);
+    // Disable past dates, today, and Fridays (day 5 in JS, day 0 is Sunday)
+    return isBefore(date, new Date()) || isToday(date) || date.getDay() === 5;
   };
 
   return (
