@@ -6,6 +6,7 @@ import { Calendar } from '@/components/ui/calendar';
 import { Globe, ArrowRight, ArrowLeft, Clock } from 'lucide-react';
 import { format, addDays, isToday, isBefore } from 'date-fns';
 import { ar } from 'date-fns/locale';
+import { getSlotBookingCount, isSlotFull, getRemainingSlots, MAX_APPOINTMENTS_PER_SLOT } from '../services/bookingService';
 
 const cityData = {
   riyadh: {
@@ -92,7 +93,9 @@ const BookingCity = () => {
       availableTimes: 'الأوقات المتاحة',
       confirmBooking: 'تأكيد الحجز',
       noDate: 'يرجى اختيار التاريخ أولاً',
-      lang: 'English'
+      lang: 'English',
+      noMoreSeats: 'لا توجد مقاعد متاحة',
+      remainingSeats: 'متبقي'
     },
     en: {
       backToHome: 'Back to Home',
@@ -100,7 +103,9 @@ const BookingCity = () => {
       availableTimes: 'Available Times',
       confirmBooking: 'Confirm Booking',
       noDate: 'Please select a date first',
-      lang: 'العربية'
+      lang: 'العربية',
+      noMoreSeats: 'No more seats',
+      remainingSeats: 'remaining'
     }
   };
 
@@ -112,7 +117,9 @@ const BookingCity = () => {
   };
 
   const handleSlotSelect = (time: string) => {
-    setSelectedSlot(time);
+    if (selectedDate && !isSlotFull(cityKey as string, selectedDate, time)) {
+      setSelectedSlot(time);
+    }
   };
 
   const handleConfirmBooking = () => {
@@ -188,20 +195,37 @@ const BookingCity = () => {
               {t.availableTimes}
             </h3>
             <div className="grid grid-cols-1 gap-3">
-              {timeSlots[cityKey as keyof typeof timeSlots]?.map((slot) => (
-                <Button
-                  key={slot.time}
-                  variant={selectedSlot === slot.time ? "default" : "outline"}
-                  className={`h-12 text-lg ${
-                    selectedSlot === slot.time 
-                      ? 'pieship-gradient text-pieship-black border-pieship-yellow' 
-                      : 'hover:border-pieship-yellow'
-                  }`}
-                  onClick={() => handleSlotSelect(slot.time)}
-                >
-                  {isEnglish ? slot.displayEn : slot.displayAr}
-                </Button>
-              ))}
+              {timeSlots[cityKey as keyof typeof timeSlots]?.map((slot) => {
+                const isFull = isSlotFull(cityKey as string, selectedDate, slot.time);
+                const remaining = getRemainingSlots(cityKey as string, selectedDate, slot.time);
+                const isSelected = selectedSlot === slot.time;
+                
+                return (
+                  <Button
+                    key={slot.time}
+                    variant={isSelected ? "default" : "outline"}
+                    className={`h-16 text-lg flex flex-col gap-1 ${
+                      isFull
+                        ? 'bg-gray-200 text-gray-500 cursor-not-allowed border-gray-300'
+                        : isSelected 
+                          ? 'pieship-gradient text-pieship-black border-pieship-yellow' 
+                          : 'hover:border-pieship-yellow'
+                    }`}
+                    onClick={() => handleSlotSelect(slot.time)}
+                    disabled={isFull}
+                  >
+                    <span className="font-medium">
+                      {isEnglish ? slot.displayEn : slot.displayAr}
+                    </span>
+                    <span className="text-xs">
+                      {isFull 
+                        ? t.noMoreSeats
+                        : `${remaining} ${t.remainingSeats}`
+                      }
+                    </span>
+                  </Button>
+                );
+              })}
             </div>
           </Card>
         )}
