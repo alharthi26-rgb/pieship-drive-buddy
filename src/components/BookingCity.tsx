@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -43,7 +42,7 @@ const cityData = {
     address: 'مكة المكرمة',
     mapsUrl: 'https://maps.app.goo.gl/GtV4TMEqfRGyhQfi8?g_st=com.google.maps.preview.copy',
     supervisorName: 'محمد ادم',
-    supervisorMobile: '0573542070'
+    supervisorMobile: '+966573551003'
   }
 };
 

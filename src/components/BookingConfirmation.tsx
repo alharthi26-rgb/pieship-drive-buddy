@@ -57,7 +57,7 @@ const BookingConfirmation = () => {
       address: 'مكة المكرمة',
       mapsUrl: 'https://maps.app.goo.gl/GtV4TMEqfRGyhQfi8?g_st=com.google.maps.preview.copy',
       supervisorName: 'محمد ادم',
-      supervisorMobile: '0573542070'
+      supervisorMobile: '+966573551003'
     }
   };
 
