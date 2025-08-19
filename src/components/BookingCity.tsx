@@ -6,7 +6,6 @@ import { Calendar } from '@/components/ui/calendar';
 import { Globe, ArrowRight, ArrowLeft, Clock } from 'lucide-react';
 import { format, addDays, isToday, isBefore } from 'date-fns';
 import { ar } from 'date-fns/locale';
-import { getSlotBookingCount, isSlotFull, getRemainingSlots, MAX_APPOINTMENTS_PER_SLOT } from '../services/bookingService';
 
 const cityData = {
   riyadh: {
