@@ -8,7 +8,8 @@ import { MapPin, Globe } from 'lucide-react';
 const cities = [
   { key: 'riyadh', nameAr: 'الرياض', nameEn: 'Riyadh' },
   { key: 'jeddah', nameAr: 'جدة', nameEn: 'Jeddah' },
-  { key: 'dammam', nameAr: 'الدمام', nameEn: 'Dammam' }
+  { key: 'dammam', nameAr: 'الدمام', nameEn: 'Dammam' },
+  { key: 'makkah', nameAr: 'مكة المكرمة', nameEn: 'Makkah' }
 ];
 
 const BookingWelcome = () => {

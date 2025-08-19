@@ -28,7 +28,8 @@ const BookingForm = () => {
   const cityData = {
     riyadh: { nameAr: 'الرياض', nameEn: 'Riyadh' },
     jeddah: { nameAr: 'جدة', nameEn: 'Jeddah' },
-    dammam: { nameAr: 'الدمام', nameEn: 'Dammam' }
+    dammam: { nameAr: 'الدمام', nameEn: 'Dammam' },
+    makkah: { nameAr: 'مكة المكرمة', nameEn: 'Makkah' }
   } as const;
 
   const timeSlots = {

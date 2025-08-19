@@ -49,6 +49,15 @@ const BookingConfirmation = () => {
       mapsUrl: 'https://maps.app.goo.gl/6mKFg6fVpLcxJgkP9',
       supervisorName: 'عبدالرحيم ابو الحسن',
       supervisorMobile: '0510029651'
+    },
+    makkah: {
+      nameAr: 'مكة المكرمة',
+      nameEn: 'Makkah',
+      officeName: 'مكتب PIESHIP - مكة المكرمة',
+      address: 'مكة المكرمة',
+      mapsUrl: 'https://maps.app.goo.gl/GtV4TMEqfRGyhQfi8?g_st=com.google.maps.preview.copy',
+      supervisorName: 'محمد ادم',
+      supervisorMobile: '0573542070'
     }
   };
 
