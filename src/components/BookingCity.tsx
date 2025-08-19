@@ -25,7 +25,7 @@ const cityData = {
     address: 'جدة - حي الروابي',
     mapsUrl: 'https://maps.app.goo.gl/4XnMD3Dkhh1UE3o2A?g_st=iw',
     supervisorName: 'محمد محسن',
-    supervisorMobile: '0573542070'
+    supervisorMobile: '+966573551003'
   },
   dammam: {
     nameAr: 'الدمام',
@@ -42,8 +42,8 @@ const cityData = {
     officeName: 'مكتب PIESHIP - مكة المكرمة',
     address: 'مكة المكرمة',
     mapsUrl: 'https://maps.app.goo.gl/GtV4TMEqfRGyhQfi8?g_st=com.google.maps.preview.copy',
-    supervisorName: 'محمد ادم',
-    supervisorMobile: '+966573551003'
+    supervisorName: 'ايمن ادم',
+    supervisorMobile: '+966573542070'
   }
 };
 
