@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -52,7 +53,6 @@ const timeSlots = {
     { time: '19:00', displayAr: '7:00 م', displayEn: '7:00 PM' }
   ],
   jeddah: [
-    { time: '16:00', displayAr: '4:00 م', displayEn: '4:00 PM' },
     { time: '17:00', displayAr: '5:00 م', displayEn: '5:00 PM' },
     { time: '18:00', displayAr: '6:00 م', displayEn: '6:00 PM' }
   ],
