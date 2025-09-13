@@ -15,8 +15,8 @@ const cityData = {
     officeName: 'مكتب PIESHIP - الرياض',
     address: 'الرياض - حي السلي',
     mapsUrl: 'https://maps.app.goo.gl/wA4jNCwVCMhuSqyYA?g_st=iwb',
-    supervisorName: 'سيف جابر',
-    supervisorMobile: '0571345377'
+    supervisorName: 'عبدالعزيز الكناني',
+    supervisorMobile: '0568172396'
   },
   jeddah: {
     nameAr: 'جدة',
