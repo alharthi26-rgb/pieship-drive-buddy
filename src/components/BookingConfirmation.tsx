@@ -29,8 +29,8 @@ const BookingConfirmation = () => {
       officeName: 'مكتب PIESHIP - الرياض',
       address: 'الرياض - حي السلي',
       mapsUrl: 'https://maps.app.goo.gl/wA4jNCwVCMhuSqyYA?g_st=iwb',
-      supervisorName: 'عبدالعزيز الكناني',
-      supervisorMobile: '0568172396'
+      supervisorName: 'Abdulrahman',
+      supervisorMobile: '0558551076'
     },
     jeddah: {
       nameAr: 'جدة',
