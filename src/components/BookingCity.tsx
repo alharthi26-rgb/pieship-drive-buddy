@@ -175,7 +175,7 @@ const BookingCity = () => {
             disabled={isDateDisabled}
             locale={isEnglish ? undefined : ar}
             fromDate={addDays(new Date(), 1)}
-            toDate={new Date(2025, 11, 31)} // December 31st, 2025
+            toDate={new Date(2026, 11, 31)} // December 31st, 2026
             className="w-full"
           />
         </Card>
