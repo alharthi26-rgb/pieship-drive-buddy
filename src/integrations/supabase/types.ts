@@ -22,6 +22,7 @@ export type Database = {
           full_name: string
           id: string
           mobile: string
+          sms_sent: boolean
           time_slot: string
         }
         Insert: {
@@ -31,6 +32,7 @@ export type Database = {
           full_name: string
           id?: string
           mobile: string
+          sms_sent?: boolean
           time_slot: string
         }
         Update: {
@@ -40,6 +42,7 @@ export type Database = {
           full_name?: string
           id?: string
           mobile?: string
+          sms_sent?: boolean
           time_slot?: string
         }
         Relationships: []
