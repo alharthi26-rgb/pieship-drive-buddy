@@ -1,21 +1,19 @@
 
 
-## Add Refresh Button to Admin Dashboard
+## Change Summary View from 10 Days to 30 Days
 
 ### Overview
-Add a manual "Refresh" button to the admin dashboard header area so you can instantly reload the data without waiting for the 15-second auto-refresh cycle.
+Extend the booking summary grid from 10 days to 30 days so you can see a full month of upcoming bookings at a glance.
 
 ### Changes
 
-**File: `src/pages/Admin.tsx`**
+**File: `src/pages/Admin.tsx`** -- 6 small text/number updates:
 
-1. Import `RefreshCw` icon from `lucide-react`
-2. Get the `refetch` functions from both `useQuery` hooks (bookings and summary)
-3. Add a "Refresh" button next to the page title ("Registrations Dashboard") that:
-   - Shows a `RefreshCw` icon with "Refresh" text
-   - Calls both `refetch` functions when clicked
-   - Spins the icon briefly while data is loading (using `isFetching` state)
-4. Style it as a subtle outline button aligned to the right of the header
+1. **Line 104**: Change comment from `// 10-day summary query` to `// 30-day summary query`
+2. **Line 107**: Change `addDays(today, 9)` to `addDays(today, 29)` (end date calculation)
+3. **Line 124**: Change comment from `// Build the 10-day date list` to `// Build the 30-day date list`
+4. **Line 127**: Change loop `i < 10` to `i < 30` (date list generation)
+5. **Line 222**: Change tab label from `"10-Day Summary"` to `"30-Day Summary"`
+6. **Lines 379-384**: Update heading text from `"10-Day Booking Summary"` to `"30-Day Booking Summary"`
 
-### Result
-A refresh button in the top-right area of the dashboard that manually triggers a data reload for whichever tab you're on, with a spinning animation while loading.
+No other files or database changes needed.
