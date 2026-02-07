@@ -1,12 +1,14 @@
-
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Calendar } from '@/components/ui/calendar';
+import { Badge } from '@/components/ui/badge';
 import { Globe, ArrowRight, ArrowLeft, Clock } from 'lucide-react';
 import { format, addDays, isToday, isBefore } from 'date-fns';
 import { ar } from 'date-fns/locale';
+import { getRemainingSlots, MAX_SLOTS_PER_SESSION } from '@/services/bookingService';
 
 const cityData = {
   riyadh: {
@@ -70,12 +72,30 @@ const BookingCity = () => {
   const [selectedSlot, setSelectedSlot] = useState<string>();
   
   const city = cityData[cityKey as keyof typeof cityData];
+  const slots = timeSlots[cityKey as keyof typeof timeSlots] ?? [];
 
   useEffect(() => {
     if (!city) {
       navigate('/');
     }
   }, [city, navigate]);
+
+  // Fetch remaining seats for all slots when date changes
+  const { data: seatCounts, isLoading: isLoadingSeats } = useQuery({
+    queryKey: ['seatCounts', cityKey, selectedDate ? format(selectedDate, 'yyyy-MM-dd') : null],
+    queryFn: async () => {
+      if (!selectedDate || !cityKey) return {};
+      const counts: Record<string, number> = {};
+      await Promise.all(
+        slots.map(async (slot) => {
+          counts[slot.time] = await getRemainingSlots(cityKey, selectedDate, slot.time);
+        })
+      );
+      return counts;
+    },
+    enabled: !!selectedDate && !!cityKey,
+    refetchInterval: 30000, // Refresh every 30s
+  });
 
   if (!city) return null;
 
@@ -86,7 +106,10 @@ const BookingCity = () => {
       availableTimes: 'الأوقات المتاحة',
       confirmBooking: 'تأكيد الحجز',
       noDate: 'يرجى اختيار التاريخ أولاً',
-      lang: 'English'
+      lang: 'English',
+      seatsRemaining: 'مقعد متبقي',
+      full: 'مكتمل',
+      loading: 'جارٍ التحميل...'
     },
     en: {
       backToHome: 'Back to Home',
@@ -94,7 +117,10 @@ const BookingCity = () => {
       availableTimes: 'Available Times',
       confirmBooking: 'Confirm Booking',
       noDate: 'Please select a date first',
-      lang: 'العربية'
+      lang: 'العربية',
+      seatsRemaining: 'seats remaining',
+      full: 'Full',
+      loading: 'Loading...'
     }
   };
 
@@ -106,6 +132,8 @@ const BookingCity = () => {
   };
 
   const handleSlotSelect = (time: string) => {
+    const remaining = seatCounts?.[time] ?? MAX_SLOTS_PER_SESSION;
+    if (remaining <= 0) return;
     setSelectedSlot(time);
   };
 
@@ -123,7 +151,6 @@ const BookingCity = () => {
   };
 
   const isDateDisabled = (date: Date) => {
-    // Disable past dates, today, and Fridays (day 5 in JS, day 0 is Sunday)
     return isBefore(date, new Date()) || isToday(date) || date.getDay() === 5;
   };
 
@@ -169,7 +196,7 @@ const BookingCity = () => {
             disabled={isDateDisabled}
             locale={isEnglish ? undefined : ar}
             fromDate={addDays(new Date(), 1)}
-            toDate={new Date(2026, 11, 31)} // December 31st, 2026
+            toDate={new Date(2026, 11, 31)}
             className="w-full"
           />
         </Card>
@@ -182,20 +209,42 @@ const BookingCity = () => {
               {t.availableTimes}
             </h3>
             <div className="grid grid-cols-1 gap-3">
-              {timeSlots[cityKey as keyof typeof timeSlots]?.map((slot) => (
-                <Button
-                  key={slot.time}
-                  variant={selectedSlot === slot.time ? "default" : "outline"}
-                  className={`h-12 text-lg ${
-                    selectedSlot === slot.time 
-                      ? 'pieship-gradient text-pieship-black border-pieship-yellow' 
-                      : 'hover:border-pieship-yellow'
-                  }`}
-                  onClick={() => handleSlotSelect(slot.time)}
-                >
-                  {isEnglish ? slot.displayEn : slot.displayAr}
-                </Button>
-              ))}
+              {slots.map((slot) => {
+                const remaining = seatCounts?.[slot.time] ?? MAX_SLOTS_PER_SESSION;
+                const isFull = remaining <= 0;
+                const isSelected = selectedSlot === slot.time;
+
+                return (
+                  <Button
+                    key={slot.time}
+                    variant={isSelected ? "default" : "outline"}
+                    className={`h-14 text-lg relative ${
+                      isSelected
+                        ? 'pieship-gradient text-pieship-black border-pieship-yellow'
+                        : isFull
+                          ? 'opacity-50 cursor-not-allowed'
+                          : 'hover:border-pieship-yellow'
+                    }`}
+                    onClick={() => handleSlotSelect(slot.time)}
+                    disabled={isFull}
+                  >
+                    <div className="flex items-center justify-between w-full">
+                      <span>{isEnglish ? slot.displayEn : slot.displayAr}</span>
+                      {isLoadingSeats ? (
+                        <span className="text-xs text-muted-foreground">{t.loading}</span>
+                      ) : isFull ? (
+                        <Badge variant="destructive" className="text-xs">
+                          {t.full}
+                        </Badge>
+                      ) : (
+                        <span className="text-sm text-muted-foreground">
+                          {remaining} {t.seatsRemaining}
+                        </span>
+                      )}
+                    </div>
+                  </Button>
+                );
+              })}
             </div>
           </Card>
         )}
