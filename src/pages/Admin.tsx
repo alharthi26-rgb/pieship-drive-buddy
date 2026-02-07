@@ -101,10 +101,10 @@ const Admin = () => {
     refetchInterval: 15000,
   });
 
-  // 10-day summary query
+  // 30-day summary query
   const today = new Date();
   const startDate = format(today, "yyyy-MM-dd");
-  const endDate = format(addDays(today, 9), "yyyy-MM-dd");
+  const endDate = format(addDays(today, 29), "yyyy-MM-dd");
 
   const { data: summaryBookings = [], isLoading: summaryLoading, isFetching: summaryFetching, refetch: refetchSummary } = useQuery({
     queryKey: ["admin-summary", startDate, endDate],
@@ -121,10 +121,10 @@ const Admin = () => {
     refetchInterval: 15000,
   });
 
-  // Build the 10-day date list and summary counts
+  // Build the 30-day date list and summary counts
   const { dates, summaryMap, cityTotals, grandTotal } = useMemo(() => {
     const dates: string[] = [];
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 30; i++) {
       dates.push(format(addDays(today, i), "yyyy-MM-dd"));
     }
 
@@ -219,7 +219,7 @@ const Admin = () => {
         <Tabs defaultValue="registrations">
           <TabsList>
             <TabsTrigger value="registrations">Registrations</TabsTrigger>
-            <TabsTrigger value="summary">10-Day Summary</TabsTrigger>
+            <TabsTrigger value="summary">30-Day Summary</TabsTrigger>
           </TabsList>
 
           {/* Registrations Tab */}
@@ -376,12 +376,12 @@ const Admin = () => {
             </Card>
           </TabsContent>
 
-          {/* 10-Day Summary Tab */}
+          {/* 30-Day Summary Tab */}
           <TabsContent value="summary" className="space-y-4">
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg">
-                  10-Day Booking Summary
+                  30-Day Booking Summary
                 </CardTitle>
               </CardHeader>
               <CardContent>
