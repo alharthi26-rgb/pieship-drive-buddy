@@ -6,6 +6,30 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
+// City details: address, Google Maps link, supervisor phone
+const CITY_DETAILS: Record<string, { address: string; mapLink: string; phone: string }> = {
+  Jeddah: {
+    address: "جدة - حي الروابي",
+    mapLink: "https://maps.app.goo.gl/4XnMD3Dkhh1UE3o2A?g_st=iw",
+    phone: "966573551003",
+  },
+  Riyadh: {
+    address: "الرياض - حي السلي",
+    mapLink: "https://maps.app.goo.gl/TVFqRWki8nfnmuaw8?g_st=iw",
+    phone: "966558551076",
+  },
+  Dammam: {
+    address: "الدمام - حي المنار",
+    mapLink: "https://maps.app.goo.gl/6mKFg6fVpLcxJgkP9?g_st=iw",
+    phone: "966510029651",
+  },
+  Makkah: {
+    address: "مكة المكرمة - حي البحيرات",
+    mapLink: "https://maps.app.goo.gl/GtV4TMEqfRGyhQfi8?g_st=iw",
+    phone: "966573542070",
+  },
+};
+
 // Time slots per city (Saudi time, UTC+3)
 const CITY_TIME_SLOTS: Record<string, string> = {
   Jeddah: "12:00",
@@ -105,8 +129,14 @@ Deno.serve(async (req) => {
     let failCount = 0;
 
     for (const booking of bookings) {
-      // Build bilingual message
-      const message = `تذكير: موعدك اليوم في ${booking.city} الساعة ${booking.time_slot}. يرجى الحضور في الوقت المحدد.\n\nReminder: Your appointment today in ${booking.city} at ${booking.time_slot}. Please arrive on time.`;
+      // Build Arabic SMS message with city-specific details
+      const cityInfo = CITY_DETAILS[booking.city] || {
+        address: booking.city,
+        mapLink: "",
+        phone: "",
+      };
+
+      const message = `اهلا ${booking.full_name}\n\nنود تذكيركم بجلسة التدريب اليوم في باي شيب PIESHIP\nاليوم: ${booking.booking_date}\nالوقت: ${booking.time_slot}\nالموقع: ${cityInfo.address}\n${cityInfo.mapLink}\nللاستفسارات: ${cityInfo.phone}`;
 
       // Clean phone number - ensure it starts with 966
       let phoneNumber = booking.mobile.replace(/\s+/g, "").replace(/^0+/, "");
