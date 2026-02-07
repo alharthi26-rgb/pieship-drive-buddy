@@ -1,53 +1,46 @@
 
 
-## SMS Reminder System -- 5 Hours Before Booking
+## تحديث قالب رسالة SMS التذكيرية
 
-### Overview
-Send an automated SMS reminder to each booked driver 5 hours before their scheduled time slot. Since bookings are in Saudi time (UTC+3), the reminder trigger times will be calculated accordingly.
+### التغييرات المطلوبة
+1. اضافة اسم المتدرب بعد كلمة "اهلا"
+2. اضافة رابط قوقل ماب للموقع
 
-### Reminder Timing
-Based on the existing time slots:
+### شكل الرسالة الجديد
+مثال لمدينة جدة:
 
-| City     | Time Slot | Saudi Time | Reminder at (Saudi) | Reminder at (UTC) |
-|----------|-----------|------------|---------------------|---------------------|
-| Jeddah   | 12:00     | 12:00 PM   | 7:00 AM             | 04:00 UTC           |
-| Riyadh   | 14:00     | 2:00 PM    | 9:00 AM             | 06:00 UTC           |
-| Dammam   | 17:00     | 5:00 PM    | 12:00 PM            | 09:00 UTC           |
-| Makkah   | 17:00     | 5:00 PM    | 12:00 PM            | 09:00 UTC           |
+```text
+اهلا محمد
 
-### Architecture
+نود تذكيركم بجلسة التدريب اليوم في باي شيب PIESHIP
+اليوم: 2026-02-07
+الوقت: 12:00
+الموقع: جدة - حي الروابي
+https://maps.app.goo.gl/4XnMD3Dkhh1UE3o2A?g_st=iw
+للاستفسارات: 966573551003
+```
 
-The system needs three parts:
+### بيانات المدن
 
-**1. Database changes**
-- Add an `sms_sent` boolean column (default `false`) to the `bookings` table to track which reminders have been sent, avoiding duplicates.
+| المدينة | الموقع | رابط قوقل ماب | هاتف المشرف |
+|---------|--------|---------------|-------------|
+| Jeddah | جدة - حي الروابي | maps.app.goo.gl/4XnMD3Dkhh1UE3o2A | 966573551003 |
+| Riyadh | الرياض - حي السلي | maps.app.goo.gl/TVFqRWki8nfnmuaw8 | 966558551076 |
+| Dammam | الدمام - حي المنار | maps.app.goo.gl/6mKFg6fVpLcxJgkP9 | 966510029651 |
+| Makkah | مكة المكرمة - حي البحيرات | maps.app.goo.gl/GtV4TMEqfRGyhQfi8 | 966573542070 |
 
-**2. Backend function: `send-sms-reminders`**
-- Runs on a schedule (cron job every 15 minutes)
-- Queries bookings where:
-  - `booking_date` is today (in Saudi timezone)
-  - `time_slot` minus 5 hours is within the current window
-  - `sms_sent` is `false`
-- Sends an SMS to each matching booking's mobile number via your SMS provider (more-sa)
-- Marks `sms_sent = true` after successful send
-- Includes logging for debugging
+### التفاصيل التقنية
 
-**3. SMS Provider Integration (more-sa)**
-- Requires API credentials stored as secrets
-- The edge function calls the more-sa API to deliver messages
-- Message content: reminder with city, date, and time details (bilingual Arabic/English)
+**الملف:** `supabase/functions/send-sms-reminders/index.ts`
 
-### Blocker: SMS Provider Details Needed
+1. اضافة ثابت `CITY_DETAILS` يحتوي على بيانات كل مدينة (العنوان بالعربي، رابط قوقل ماب، رقم المشرف) -- مطابق للبيانات الموجودة في `BookingConfirmation.tsx`.
 
-Before implementation, I need:
-- The **API documentation URL** or details for more-sa (endpoint, auth method, request format)
-- Your **API credentials** (API key, token, etc.) which will be stored securely as backend secrets
+2. تحديث قالب الرسالة في السطر 109 ليصبح:
+   - `اهلا {full_name}` -- اسم المتدرب من حقل `full_name` (موجود اصلا في الاستعلام)
+   - `اليوم: {booking_date}`
+   - `الوقت: {time_slot}`
+   - `الموقع: {address}` + سطر جديد يحتوي على رابط قوقل ماب
+   - `للاستفسارات: {supervisor_phone}`
 
-Once you provide the API details, I can build and deploy the full solution.
-
-### Files to Create/Edit
-- **Database migration**: Add `sms_sent` column to bookings
-- **`supabase/functions/send-sms-reminders/index.ts`**: The scheduled function
-- **`supabase/config.toml`**: Register the new function
-- **Cron job SQL**: Schedule the function to run every 15 minutes
+3. لا حاجة لتعديل قاعدة البيانات -- كل الحقول المطلوبة (`full_name`, `city`, `booking_date`, `time_slot`) موجودة في الاستعلام الحالي.
 
