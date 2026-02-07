@@ -1,23 +1,35 @@
 
 
-## Change Jeddah Time Slot to 12:00 PM
+## Add Admin Dashboard at /admindrivers
 
 ### Overview
-Update the Jeddah time slot from **5:00 PM (17:00)** to **12:00 PM (12:00)** across all three files that reference it.
+Create an admin page to view all registered bookings, accessible at `/admindrivers`.
 
-### Files to Update
+### Implementation
 
-**1. `src/components/BookingCity.tsx`** (line 57)
-- Change Jeddah's time slot from `{ time: '17:00', displayAr: '5:00 م', displayEn: '5:00 PM' }` to `{ time: '12:00', displayAr: '12:00 م', displayEn: '12:00 PM' }`
+**1. Create Admin Page (`src/pages/Admin.tsx`)**
+- Table showing all bookings: Name, Mobile, City, Date, Time Slot, Registration Time
+- Dropdown filter for city (Riyadh, Jeddah, Dammam, Makkah)
+- Date picker filter
+- Total count of registrations displayed
+- Sorted by newest first
 
-**2. `src/components/BookingForm.tsx`** (lines 37-40)
-- Add the new `'12:00'` entry to the `timeSlots` lookup: `{ displayAr: '12:00 م', displayEn: '12:00 PM' }`
+**2. Add Route in `src/App.tsx`**
+- Add `/admindrivers` route pointing to the Admin page
+- Not linked from the main booking site -- only accessible if you know the URL
 
-**3. `src/components/BookingConfirmation.tsx`** (lines 64-67)
-- Add the new `'12:00'` entry to the `timeSlots` lookup: `{ displayAr: '12:00 م', displayEn: '12:00 PM' }`
+**3. Features**
+- Filter by city and date
+- Show booking counts per slot
+- Responsive table layout
+- Auto-refreshing data using React Query
 
-### Notes
-- The `17:00` entry remains in BookingForm and BookingConfirmation since Dammam and Makkah still use it
-- Only Jeddah's slot assignment in BookingCity changes from 17:00 to 12:00
-- No database changes needed -- the `time_slot` column stores free text so `'12:00'` works automatically
+### How to Access
+Once built, go to: **yoursite.com/admindrivers**
+
+### Technical Details
+- Queries the existing `bookings` table using the Supabase client
+- Read-only page (uses the existing public SELECT RLS policy)
+- Built with existing UI components (Table, Card, Select)
+- No database changes needed
 
