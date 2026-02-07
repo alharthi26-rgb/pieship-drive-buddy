@@ -35,6 +35,7 @@ const BookingForm = () => {
   } as const;
 
   const timeSlots = {
+    '12:00': { displayAr: '12:00 م', displayEn: '12:00 PM' },
     '14:00': { displayAr: '2:00 م', displayEn: '2:00 PM' },
     '17:00': { displayAr: '5:00 م', displayEn: '5:00 PM' }
   } as const;

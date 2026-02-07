@@ -54,7 +54,7 @@ const timeSlots = {
     { time: '14:00', displayAr: '2:00 م', displayEn: '2:00 PM' }
   ],
   jeddah: [
-    { time: '17:00', displayAr: '5:00 م', displayEn: '5:00 PM' }
+    { time: '12:00', displayAr: '12:00 م', displayEn: '12:00 PM' }
   ],
   dammam: [
     { time: '17:00', displayAr: '5:00 م', displayEn: '5:00 PM' }
