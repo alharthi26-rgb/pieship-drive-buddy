@@ -9,6 +9,7 @@ import BookingWelcome from "./components/BookingWelcome";
 import BookingCity from "./components/BookingCity";
 import BookingForm from "./components/BookingForm";
 import BookingConfirmation from "./components/BookingConfirmation";
+import Admin from "./pages/Admin";
 
 const queryClient = new QueryClient();
 
@@ -23,6 +24,7 @@ const App = () => (
           <Route path="/book/:cityKey" element={<BookingCity />} />
           <Route path="/booking-form" element={<BookingForm />} />
           <Route path="/booking-confirmation" element={<BookingConfirmation />} />
+          <Route path="/admindrivers" element={<Admin />} />
           <Route path="/demo" element={<Index />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
