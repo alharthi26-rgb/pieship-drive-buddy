@@ -15,8 +15,8 @@ const cityData = {
     officeName: 'مكتب PIESHIP - الرياض',
     address: 'الرياض - حي السلي',
     mapsUrl: 'https://maps.app.goo.gl/TVFqRWki8nfnmuaw8',
-    supervisorName: 'Abdulrahman',
-    supervisorMobile: '0558551076'
+    supervisorName: 'عبدالرحمن',
+    supervisorMobile: '966558551076'
   },
   jeddah: {
     nameAr: 'جدة',
@@ -25,7 +25,7 @@ const cityData = {
     address: 'جدة - حي الروابي',
     mapsUrl: 'https://maps.app.goo.gl/4XnMD3Dkhh1UE3o2A?g_st=iw',
     supervisorName: 'محمد محسن',
-    supervisorMobile: '+966573551003'
+    supervisorMobile: '966573551003'
   },
   dammam: {
     nameAr: 'الدمام',
@@ -34,37 +34,31 @@ const cityData = {
     address: 'الدمام - حي المنار',
     mapsUrl: 'https://maps.app.goo.gl/6mKFg6fVpLcxJgkP9',
     supervisorName: 'عبدالرحيم ابو الحسن',
-    supervisorMobile: '0510029651'
+    supervisorMobile: '966510029651'
   },
   makkah: {
     nameAr: 'مكة المكرمة',
     nameEn: 'Makkah',
     officeName: 'مكتب PIESHIP - مكة المكرمة',
-    address: 'مكة المكرمة',
+    address: 'مكة المكرمة - حي البحيرات',
     mapsUrl: 'https://maps.app.goo.gl/GtV4TMEqfRGyhQfi8?g_st=com.google.maps.preview.copy',
     supervisorName: 'ايمن ادم',
-    supervisorMobile: '+966573542070'
+    supervisorMobile: '966573542070'
   }
 };
 
 const timeSlots = {
   riyadh: [
-    { time: '16:00', displayAr: '4:00 م', displayEn: '4:00 PM' },
-    { time: '19:00', displayAr: '7:00 م', displayEn: '7:00 PM' }
+    { time: '14:00', displayAr: '2:00 م', displayEn: '2:00 PM' }
   ],
   jeddah: [
-    { time: '17:00', displayAr: '5:00 م', displayEn: '5:00 PM' },
-    { time: '18:00', displayAr: '6:00 م', displayEn: '6:00 PM' }
+    { time: '17:00', displayAr: '5:00 م', displayEn: '5:00 PM' }
   ],
   dammam: [
-    { time: '16:00', displayAr: '4:00 م', displayEn: '4:00 PM' },
-    { time: '17:00', displayAr: '5:00 م', displayEn: '5:00 PM' },
-    { time: '18:00', displayAr: '6:00 م', displayEn: '6:00 PM' }
+    { time: '17:00', displayAr: '5:00 م', displayEn: '5:00 PM' }
   ],
   makkah: [
-    { time: '16:00', displayAr: '4:00 م', displayEn: '4:00 PM' },
-    { time: '17:00', displayAr: '5:00 م', displayEn: '5:00 PM' },
-    { time: '18:00', displayAr: '6:00 م', displayEn: '6:00 PM' }
+    { time: '17:00', displayAr: '5:00 م', displayEn: '5:00 PM' }
   ]
 };
 
