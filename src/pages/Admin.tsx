@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   Card,
@@ -32,6 +32,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Input } from "@/components/ui/input";
 
 const cities = [
   { value: "all", label: "All Cities" },
@@ -47,9 +48,15 @@ const timeSlotLabels: Record<string, string> = {
   "17:00": "5:00 PM",
 };
 
+type SortField = "created_at" | "time_slot" | "booking_date" | "city" | "mobile" | "full_name";
+type SortDir = "asc" | "desc";
+
 const Admin = () => {
   const [cityFilter, setCityFilter] = useState("all");
   const [dateFilter, setDateFilter] = useState<Date | undefined>();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortField, setSortField] = useState<SortField>("created_at");
+  const [sortDir, setSortDir] = useState<SortDir>("desc");
 
   const { data: bookings = [], isLoading } = useQuery({
     queryKey: ["admin-bookings", cityFilter, dateFilter],
@@ -74,9 +81,52 @@ const Admin = () => {
     refetchInterval: 15000,
   });
 
+  const filteredAndSorted = useMemo(() => {
+    let result = [...bookings];
+
+    // Text search across name and mobile
+    if (searchQuery.trim()) {
+      const q = searchQuery.trim().toLowerCase();
+      result = result.filter(
+        (b) =>
+          b.full_name.toLowerCase().includes(q) ||
+          b.mobile.includes(q)
+      );
+    }
+
+    // Sort
+    result.sort((a, b) => {
+      const valA = a[sortField] ?? "";
+      const valB = b[sortField] ?? "";
+      const cmp = String(valA).localeCompare(String(valB));
+      return sortDir === "asc" ? cmp : -cmp;
+    });
+
+    return result;
+  }, [bookings, searchQuery, sortField, sortDir]);
+
+  const toggleSort = (field: SortField) => {
+    if (sortField === field) {
+      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    } else {
+      setSortField(field);
+      setSortDir("asc");
+    }
+  };
+
+  const SortIcon = ({ field }: { field: SortField }) => {
+    if (sortField !== field) return <ArrowUpDown className="ml-1 h-3 w-3 opacity-40" />;
+    return sortDir === "asc" ? (
+      <ArrowUp className="ml-1 h-3 w-3" />
+    ) : (
+      <ArrowDown className="ml-1 h-3 w-3" />
+    );
+  };
+
   const clearFilters = () => {
     setCityFilter("all");
     setDateFilter(undefined);
+    setSearchQuery("");
   };
 
   return (
@@ -89,6 +139,13 @@ const Admin = () => {
         {/* Filters */}
         <Card>
           <CardContent className="p-4 flex flex-wrap items-center gap-4">
+            <Input
+              placeholder="Search name or mobile…"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-[220px]"
+            />
+
             <Select value={cityFilter} onValueChange={setCityFilter}>
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Filter by city" />
@@ -130,7 +187,7 @@ const Admin = () => {
             </Button>
 
             <span className="ml-auto text-sm text-muted-foreground font-medium">
-              Total: {bookings.length} registrations
+              Total: {filteredAndSorted.length} registrations
             </span>
           </CardContent>
         </Card>
@@ -145,7 +202,7 @@ const Admin = () => {
               <p className="text-muted-foreground text-center py-8">
                 Loading…
               </p>
-            ) : bookings.length === 0 ? (
+            ) : filteredAndSorted.length === 0 ? (
               <p className="text-muted-foreground text-center py-8">
                 No registrations found.
               </p>
@@ -153,17 +210,59 @@ const Admin = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>#</TableHead>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Mobile</TableHead>
-                    <TableHead>City</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Time Slot</TableHead>
-                    <TableHead>Registered At</TableHead>
+                    <TableHead className="w-[50px]">#</TableHead>
+                    <TableHead>
+                      <button
+                        className="flex items-center hover:text-foreground transition-colors"
+                        onClick={() => toggleSort("full_name")}
+                      >
+                        Name <SortIcon field="full_name" />
+                      </button>
+                    </TableHead>
+                    <TableHead>
+                      <button
+                        className="flex items-center hover:text-foreground transition-colors"
+                        onClick={() => toggleSort("mobile")}
+                      >
+                        Mobile <SortIcon field="mobile" />
+                      </button>
+                    </TableHead>
+                    <TableHead>
+                      <button
+                        className="flex items-center hover:text-foreground transition-colors"
+                        onClick={() => toggleSort("city")}
+                      >
+                        City <SortIcon field="city" />
+                      </button>
+                    </TableHead>
+                    <TableHead>
+                      <button
+                        className="flex items-center hover:text-foreground transition-colors"
+                        onClick={() => toggleSort("booking_date")}
+                      >
+                        Date <SortIcon field="booking_date" />
+                      </button>
+                    </TableHead>
+                    <TableHead>
+                      <button
+                        className="flex items-center hover:text-foreground transition-colors"
+                        onClick={() => toggleSort("time_slot")}
+                      >
+                        Time Slot <SortIcon field="time_slot" />
+                      </button>
+                    </TableHead>
+                    <TableHead>
+                      <button
+                        className="flex items-center hover:text-foreground transition-colors"
+                        onClick={() => toggleSort("created_at")}
+                      >
+                        Registered At <SortIcon field="created_at" />
+                      </button>
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {bookings.map((b, i) => (
+                  {filteredAndSorted.map((b, i) => (
                     <TableRow key={b.id}>
                       <TableCell className="text-muted-foreground">
                         {i + 1}
