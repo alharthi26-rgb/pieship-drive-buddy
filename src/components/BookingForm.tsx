@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Globe, ArrowRight, ArrowLeft, User, Phone } from 'lucide-react';
 import { format } from 'date-fns';
 import { ar } from 'date-fns/locale';
+import { createBooking } from '@/services/bookingService';
 
 type Status = 'idle' | 'sending' | 'ok' | 'err';
 
@@ -17,6 +18,7 @@ const BookingForm = () => {
 
   const [isEnglish, setIsEnglish] = useState<boolean>(initialLang || false);
   const [status, setStatus] = useState<Status>('idle');
+  const [submitError, setSubmitError] = useState<string>('');
   const [botField, setBotField] = useState<string>(''); // honeypot
 
   const [formData, setFormData] = useState({
@@ -33,10 +35,8 @@ const BookingForm = () => {
   } as const;
 
   const timeSlots = {
-    '16:00': { displayAr: '4:00 م', displayEn: '4:00 PM' },
-    '17:00': { displayAr: '5:00 م', displayEn: '5:00 PM' },
-    '18:00': { displayAr: '6:00 م', displayEn: '6:00 PM' },
-    '19:00': { displayAr: '7:00 م', displayEn: '7:00 PM' }
+    '14:00': { displayAr: '2:00 م', displayEn: '2:00 PM' },
+    '17:00': { displayAr: '5:00 م', displayEn: '5:00 PM' }
   } as const;
 
   const content = {
@@ -54,7 +54,10 @@ const BookingForm = () => {
       confirmBooking: status === 'sending' ? 'جارٍ التأكيد...' : 'تأكيد الحجز',
       lang: 'English',
       nameError: 'يرجى إدخال الاسم الكامل (كلمتين على الأقل)',
-      mobileError: 'رقم الجوال غير صحيح. يجب أن يبدأ بـ 05 ويكون 10 أرقام'
+      mobileError: 'رقم الجوال غير صحيح. يجب أن يبدأ بـ 05 ويكون 10 أرقام',
+      slotFullError: 'عذراً، هذا الموعد أصبح مكتملاً. يرجى اختيار موعد آخر.',
+      duplicateError: 'لديك حجز مسبق في هذا التاريخ. لا يمكن الحجز مرتين في نفس اليوم.',
+      genericError: 'فشل الإرسال. حاول مرة أخرى.'
     },
     en: {
       backToDate: 'Back to Date Selection',
@@ -70,7 +73,10 @@ const BookingForm = () => {
       confirmBooking: status === 'sending' ? 'Submitting...' : 'Confirm Booking',
       lang: 'العربية',
       nameError: 'Please enter full name (at least 2 words)',
-      mobileError: 'Invalid mobile number. Must start with 05 and be 10 digits'
+      mobileError: 'Invalid mobile number. Must start with 05 and be 10 digits',
+      slotFullError: 'Sorry, this time slot is now full. Please choose another slot.',
+      duplicateError: 'You already have a booking on this date. Cannot book twice on the same day.',
+      genericError: 'Submission failed. Please try again.'
     }
   };
 
@@ -115,27 +121,52 @@ const BookingForm = () => {
     if (botField) return; // bot caught
 
     setStatus('sending');
-
-    // Values Netlify expects (must match hidden detection form field names)
-    const payload = {
-      'form-name': 'booking',
-      name: formData.fullName,
-      mobile: formData.mobile,
-      city: city as string,
-      date: String(date),
-      time: String(time),
-    };
+    setSubmitError('');
 
     try {
-      await fetch('/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: encode(payload),
-      });
+      // 1. Insert into Supabase (with race condition re-check)
+      const bookingDate = new Date(date);
+      const result = await createBooking(
+        city as string,
+        bookingDate,
+        time as string,
+        formData.fullName,
+        formData.mobile
+      );
+
+      if (!result.success) {
+        setStatus('err');
+        if (result.error === 'slot_full') {
+          setSubmitError(t.slotFullError);
+        } else if (result.error === 'duplicate_booking') {
+          setSubmitError(t.duplicateError);
+        } else {
+          setSubmitError(t.genericError);
+        }
+        return;
+      }
+
+      // 2. Also submit to Netlify Forms (best-effort, don't block on failure)
+      const payload = {
+        'form-name': 'booking',
+        name: formData.fullName,
+        mobile: formData.mobile,
+        city: city as string,
+        date: String(date),
+        time: String(time),
+      };
+
+      try {
+        await fetch('/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: encode(payload),
+        });
+      } catch (netlifyErr) {
+        console.warn('Netlify submit failed (non-blocking)', netlifyErr);
+      }
 
       setStatus('ok');
-
-      // navigate to your confirmation page
       navigate('/booking-confirmation', {
         state: {
           city,
@@ -146,16 +177,16 @@ const BookingForm = () => {
         }
       });
     } catch (err) {
-      console.error('Netlify submit failed', err);
+      console.error('Booking submission failed', err);
       setStatus('err');
-      // Optional: still navigate, or show an error. Here we show error and stay.
-      // If you prefer to always navigate, move navigate() into finally{}.
+      setSubmitError(t.genericError);
     }
   };
 
   const handleInputChange = (field: 'fullName' | 'mobile', value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) setErrors((prev) => ({ ...prev, [field]: '' }));
+    if (submitError) setSubmitError('');
   };
 
   return (
@@ -193,13 +224,13 @@ const BookingForm = () => {
             <div className="flex justify-between">
               <span className="text-pieship-gray">{t.time}:</span>
               <span className="font-medium text-pieship-black">
-                {timeSlots[time as keyof typeof timeSlots][isEnglish ? 'displayEn' : 'displayAr']}
+                {timeSlots[time as keyof typeof timeSlots]?.[isEnglish ? 'displayEn' : 'displayAr'] ?? time}
               </span>
             </div>
           </div>
         </Card>
 
-        {/* Driver Form (submits to Netlify Forms) */}
+        {/* Driver Form */}
         <Card className="pieship-card p-6">
           <h2 className="font-semibold text-pieship-black mb-4">{t.driverInfo}</h2>
 
@@ -231,7 +262,7 @@ const BookingForm = () => {
                 <User className="absolute right-3 top-3 w-4 h-4 text-pieship-gray" />
                 <Input
                   id="fullName"
-                  name="name" // <-- Netlify field name
+                  name="name"
                   value={formData.fullName}
                   onChange={(e) => handleInputChange('fullName', e.target.value)}
                   placeholder={t.fullNamePlaceholder}
@@ -251,7 +282,7 @@ const BookingForm = () => {
                 <Phone className="absolute right-3 top-3 w-4 h-4 text-pieship-gray" />
                 <Input
                   id="mobile"
-                  name="mobile" // <-- Netlify field name
+                  name="mobile"
                   value={formData.mobile}
                   onChange={(e) => handleInputChange('mobile', e.target.value)}
                   placeholder={t.mobilePlaceholder}
@@ -265,7 +296,7 @@ const BookingForm = () => {
               {errors.mobile && <p className="text-red-500 text-sm">{errors.mobile}</p>}
             </div>
 
-            {/* Hidden fields sent with the submission so Sheets has everything */}
+            {/* Hidden fields */}
             <input type="hidden" name="city" value={String(city)} />
             <input type="hidden" name="date" value={String(date)} />
             <input type="hidden" name="time" value={String(time)} />
@@ -279,10 +310,8 @@ const BookingForm = () => {
               {t.confirmBooking}
             </Button>
 
-            {status === 'err' && (
-              <p className="text-red-500 text-sm mt-2">
-                {isEnglish ? 'Submission failed. Please try again.' : 'فشل الإرسال. حاول مرة أخرى.'}
-              </p>
+            {submitError && (
+              <p className="text-red-500 text-sm mt-2">{submitError}</p>
             )}
           </form>
         </Card>
