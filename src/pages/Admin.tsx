@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { format, addDays } from "date-fns";
-import { CalendarIcon, ArrowUp, ArrowDown, ArrowUpDown } from "lucide-react";
+import { CalendarIcon, ArrowUp, ArrowDown, ArrowUpDown, RefreshCw } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   Card,
@@ -78,7 +78,7 @@ const Admin = () => {
   const [sortDir, setSortDir] = useState<SortDir>("desc");
 
   // Existing bookings query for the registrations tab
-  const { data: bookings = [], isLoading } = useQuery({
+  const { data: bookings = [], isLoading, isFetching: bookingsFetching, refetch: refetchBookings } = useQuery({
     queryKey: ["admin-bookings", cityFilter, dateFilter],
     queryFn: async () => {
       let query = supabase
@@ -106,7 +106,7 @@ const Admin = () => {
   const startDate = format(today, "yyyy-MM-dd");
   const endDate = format(addDays(today, 9), "yyyy-MM-dd");
 
-  const { data: summaryBookings = [], isLoading: summaryLoading } = useQuery({
+  const { data: summaryBookings = [], isLoading: summaryLoading, isFetching: summaryFetching, refetch: refetchSummary } = useQuery({
     queryKey: ["admin-summary", startDate, endDate],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -201,9 +201,20 @@ const Admin = () => {
   return (
     <div className="min-h-screen bg-background p-4 md:p-8">
       <div className="max-w-6xl mx-auto space-y-6">
-        <h1 className="text-2xl font-bold text-foreground">
-          Registrations Dashboard
-        </h1>
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl font-bold text-foreground">
+            Registrations Dashboard
+          </h1>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => { refetchBookings(); refetchSummary(); }}
+            disabled={bookingsFetching || summaryFetching}
+          >
+            <RefreshCw className={cn("h-4 w-4", (bookingsFetching || summaryFetching) && "animate-spin")} />
+            Refresh
+          </Button>
+        </div>
 
         <Tabs defaultValue="registrations">
           <TabsList>
