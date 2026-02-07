@@ -28,9 +28,9 @@ const BookingConfirmation = () => {
       nameEn: 'Riyadh',
       officeName: 'مكتب PIESHIP - الرياض',
       address: 'الرياض - حي السلي',
-      mapsUrl: 'https://maps.app.goo.gl/wA4jNCwVCMhuSqyYA?g_st=iwb',
-      supervisorName: 'Abdulrahman',
-      supervisorMobile: '0558551076'
+      mapsUrl: 'https://maps.app.goo.gl/TVFqRWki8nfnmuaw8',
+      supervisorName: 'عبدالرحمن',
+      supervisorMobile: '966558551076'
     },
     jeddah: {
       nameAr: 'جدة',
@@ -39,7 +39,7 @@ const BookingConfirmation = () => {
       address: 'جدة - حي الروابي',
       mapsUrl: 'https://maps.app.goo.gl/4XnMD3Dkhh1UE3o2A?g_st=iw',
       supervisorName: 'محمد محسن',
-      supervisorMobile: '+966573551003'
+      supervisorMobile: '966573551003'
     },
     dammam: {
       nameAr: 'الدمام',
@@ -48,24 +48,22 @@ const BookingConfirmation = () => {
       address: 'الدمام - حي المنار',
       mapsUrl: 'https://maps.app.goo.gl/6mKFg6fVpLcxJgkP9',
       supervisorName: 'عبدالرحيم ابو الحسن',
-      supervisorMobile: '0510029651'
+      supervisorMobile: '966510029651'
     },
     makkah: {
       nameAr: 'مكة المكرمة',
       nameEn: 'Makkah',
       officeName: 'مكتب PIESHIP - مكة المكرمة',
-      address: 'مكة المكرمة',
+      address: 'مكة المكرمة - حي البحيرات',
       mapsUrl: 'https://maps.app.goo.gl/GtV4TMEqfRGyhQfi8?g_st=com.google.maps.preview.copy',
       supervisorName: 'ايمن ادم',
-      supervisorMobile: '+966573542070'
+      supervisorMobile: '966573542070'
     }
   };
 
   const timeSlots = {
-    '16:00': { displayAr: '4:00 م', displayEn: '4:00 PM' },
-    '17:00': { displayAr: '5:00 م', displayEn: '5:00 PM' },
-    '18:00': { displayAr: '6:00 م', displayEn: '6:00 PM' },
-    '19:00': { displayAr: '7:00 م', displayEn: '7:00 PM' }
+    '14:00': { displayAr: '2:00 م', displayEn: '2:00 PM' },
+    '17:00': { displayAr: '5:00 م', displayEn: '5:00 PM' }
   };
 
   const content = {
@@ -233,7 +231,7 @@ END:VCALENDAR`;
                       size="sm"
                       variant="outline"
                       className="h-7 px-2 text-xs bg-green-500 hover:bg-green-600 text-white border-green-500"
-                      onClick={() => window.open(`https://wa.me/${cityInfo.supervisorMobile.replace(/^0/, '966')}`, '_blank')}
+                      onClick={() => window.open(`https://wa.me/${cityInfo.supervisorMobile}`, '_blank')}
                     >
                       <MessageCircle className="w-3 h-3 mr-1" />
                       {t.whatsapp}
