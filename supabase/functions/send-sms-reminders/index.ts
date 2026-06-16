@@ -33,7 +33,7 @@ const CITY_DETAILS: Record<string, { address: string; mapLink: string; phone: st
 // Time slots per city (Saudi time, UTC+3) — each city now has two slots
 const CITY_TIME_SLOTS: Record<string, string[]> = {
   Jeddah: ["13:00", "14:00"],
-  Riyadh: ["14:00", "15:00"],
+  Riyadh: ["14:00", "16:00"],
   Dammam: ["16:00", "17:00"],
   Makkah: ["16:00", "17:00"],
 };
