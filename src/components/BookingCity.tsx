@@ -136,7 +136,7 @@ const BookingCity = () => {
   };
 
   const handleSlotSelect = (time: string) => {
-    const remaining = seatCounts?.[time] ?? MAX_SLOTS_PER_SESSION;
+    const remaining = seatCounts?.[time] ?? getCityCapacity(cityKey ?? '');
     if (remaining <= 0) return;
     setSelectedSlot(time);
   };
