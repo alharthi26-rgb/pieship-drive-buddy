@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Globe, ArrowRight, ArrowLeft, Clock } from 'lucide-react';
 import { format, addDays, isToday, isBefore } from 'date-fns';
 import { ar } from 'date-fns/locale';
-import { getRemainingSlots, MAX_SLOTS_PER_SESSION } from '@/services/bookingService';
+import { getRemainingSlots, getCityCapacity } from '@/services/bookingService';
 
 const cityData = {
   riyadh: {
