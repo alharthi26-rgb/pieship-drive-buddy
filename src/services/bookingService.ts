@@ -44,7 +44,7 @@ export const isSlotFull = async (
   time: string
 ): Promise<boolean> => {
   const count = await getSlotBookingCount(city, date, time);
-  return count >= MAX_SLOTS_PER_SESSION;
+  return count >= getCityCapacity(city);
 };
 
 export const getRemainingSlots = async (
@@ -53,7 +53,7 @@ export const getRemainingSlots = async (
   time: string
 ): Promise<number> => {
   const count = await getSlotBookingCount(city, date, time);
-  return Math.max(0, MAX_SLOTS_PER_SESSION - count);
+  return Math.max(0, getCityCapacity(city) - count);
 };
 
 export const createBooking = async (
