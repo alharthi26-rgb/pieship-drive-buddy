@@ -1,7 +1,20 @@
 import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
 
-export const MAX_SLOTS_PER_SESSION = 30;
+export const CITY_CAPACITIES: Record<string, number> = {
+  riyadh: 20,
+  jeddah: 15,
+  makkah: 10,
+  dammam: 10,
+};
+
+export const DEFAULT_CAPACITY = 15;
+
+export const getCityCapacity = (city: string): number =>
+  CITY_CAPACITIES[city] ?? DEFAULT_CAPACITY;
+
+/** @deprecated Use getCityCapacity(city) instead. Kept for backwards compatibility. */
+export const MAX_SLOTS_PER_SESSION = DEFAULT_CAPACITY;
 
 const formatDate = (date: Date): string => format(date, 'yyyy-MM-dd');
 
