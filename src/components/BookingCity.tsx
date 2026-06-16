@@ -52,7 +52,7 @@ const cityData = {
 const timeSlots = {
   riyadh: [
     { time: '14:00', displayAr: '2:00 م', displayEn: '2:00 PM' },
-    { time: '15:00', displayAr: '3:00 م', displayEn: '3:00 PM' }
+    { time: '16:00', displayAr: '4:00 م', displayEn: '4:00 PM' }
   ],
   jeddah: [
     { time: '13:00', displayAr: '1:00 م', displayEn: '1:00 PM' },
