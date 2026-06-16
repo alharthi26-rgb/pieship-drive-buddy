@@ -214,7 +214,7 @@ const BookingCity = () => {
             </h3>
             <div className="grid grid-cols-1 gap-3">
               {slots.map((slot) => {
-                const remaining = seatCounts?.[slot.time] ?? MAX_SLOTS_PER_SESSION;
+                const remaining = seatCounts?.[slot.time] ?? getCityCapacity(cityKey ?? '');
                 const isFull = remaining <= 0;
                 const isSelected = selectedSlot === slot.time;
 
