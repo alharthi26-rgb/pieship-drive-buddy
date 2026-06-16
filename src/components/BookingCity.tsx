@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Globe, ArrowRight, ArrowLeft, Clock } from 'lucide-react';
 import { format, addDays, isToday, isBefore } from 'date-fns';
 import { ar } from 'date-fns/locale';
-import { getRemainingSlots, MAX_SLOTS_PER_SESSION } from '@/services/bookingService';
+import { getRemainingSlots, getCityCapacity } from '@/services/bookingService';
 
 const cityData = {
   riyadh: {
@@ -51,15 +51,19 @@ const cityData = {
 
 const timeSlots = {
   riyadh: [
-    { time: '14:00', displayAr: '2:00 م', displayEn: '2:00 PM' }
+    { time: '14:00', displayAr: '2:00 م', displayEn: '2:00 PM' },
+    { time: '15:00', displayAr: '3:00 م', displayEn: '3:00 PM' }
   ],
   jeddah: [
-    { time: '12:00', displayAr: '12:00 م', displayEn: '12:00 PM' }
+    { time: '13:00', displayAr: '1:00 م', displayEn: '1:00 PM' },
+    { time: '14:00', displayAr: '2:00 م', displayEn: '2:00 PM' }
   ],
   dammam: [
+    { time: '16:00', displayAr: '4:00 م', displayEn: '4:00 PM' },
     { time: '17:00', displayAr: '5:00 م', displayEn: '5:00 PM' }
   ],
   makkah: [
+    { time: '16:00', displayAr: '4:00 م', displayEn: '4:00 PM' },
     { time: '17:00', displayAr: '5:00 م', displayEn: '5:00 PM' }
   ]
 };
@@ -132,7 +136,7 @@ const BookingCity = () => {
   };
 
   const handleSlotSelect = (time: string) => {
-    const remaining = seatCounts?.[time] ?? MAX_SLOTS_PER_SESSION;
+    const remaining = seatCounts?.[time] ?? getCityCapacity(cityKey ?? '');
     if (remaining <= 0) return;
     setSelectedSlot(time);
   };
@@ -210,7 +214,7 @@ const BookingCity = () => {
             </h3>
             <div className="grid grid-cols-1 gap-3">
               {slots.map((slot) => {
-                const remaining = seatCounts?.[slot.time] ?? MAX_SLOTS_PER_SESSION;
+                const remaining = seatCounts?.[slot.time] ?? getCityCapacity(cityKey ?? '');
                 const isFull = remaining <= 0;
                 const isSelected = selectedSlot === slot.time;
 

@@ -30,18 +30,20 @@ const CITY_DETAILS: Record<string, { address: string; mapLink: string; phone: st
   },
 };
 
-// Time slots per city (Saudi time, UTC+3)
-const CITY_TIME_SLOTS: Record<string, string> = {
-  Jeddah: "12:00",
-  Riyadh: "14:00",
-  Dammam: "17:00",
-  Makkah: "17:00",
+// Time slots per city (Saudi time, UTC+3) — each city now has two slots
+const CITY_TIME_SLOTS: Record<string, string[]> = {
+  Jeddah: ["13:00", "14:00"],
+  Riyadh: ["14:00", "15:00"],
+  Dammam: ["16:00", "17:00"],
+  Makkah: ["16:00", "17:00"],
 };
 
 // 5 hours before each slot (in Saudi time HH:MM)
 const REMINDER_WINDOWS: Record<string, string> = {
-  "12:00": "07:00",
+  "13:00": "08:00",
   "14:00": "09:00",
+  "15:00": "10:00",
+  "16:00": "11:00",
   "17:00": "12:00",
 };
 
